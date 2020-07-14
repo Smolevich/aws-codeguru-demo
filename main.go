@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,8 +11,13 @@ import (
 
 const INSTAGMAM_HOST = "https://www.instagram.com/web/search/topsearch/"
 
+type Response struct {
+	Users interface{} `json:"data"`
+}
+
 func main() {
 	var search_query string
+	var res interface{}
 	fmt.Print("Enter search query: ")
 	fmt.Fscan(os.Stdin, &search_query)
 	url := fmt.Sprintf("%s?context=blended&query=%s&include_reel=true", INSTAGMAM_HOST, search_query)
@@ -28,5 +34,7 @@ func main() {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	bodyString := string(body)
+	json.Unmarshal(body, &res)
+	fmt.Println(res)
 	fmt.Println(bodyString)
 }
